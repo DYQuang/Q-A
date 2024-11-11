@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Game Quiz Ngày Nhà Giáo</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f7f1e3;
+            color: #333;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+        }
+        .quiz-container {
+            background-color: #fff;
+            padding: 2rem;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            max-width: 600px;
+            width: 100%;
+            text-align: center;
+        }
+        h1 {
+            color: #34495e;
+        }
+        .question {
+            font-size: 1.25rem;
+            margin-bottom: 1rem;
+        }
+        .options {
+            list-style-type: none;
+            padding: 0;
+            margin: 0;
+        }
+        .options li {
+            background-color: #f0f3f4;
+            margin: 10px 0;
+            padding: 10px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+        .options li:hover {
+            background-color: #d1d8e0;
+        }
+        .submit-button, .restart-button {
+            margin-top: 1rem;
+            padding: 10px 20px;
+            font-size: 1rem;
+            color: #fff;
+            background-color: #27ae60;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+        .submit-button:hover, .restart-button:hover {
+            background-color: #2ecc71;
+        }
+        .result {
+            margin-top: 1rem;
+            font-weight: bold;
+            font-size: 1.1rem;
+        }
+        .score {
+            font-size: 1.1rem;
+            color: #34495e;
+            margin-top: 1rem;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="quiz-container" id="quiz-container">
+        <h1>Game Quiz Ngày Nhà Giáo Việt Nam</h1>
+        <div class="question" id="question"></div>
+        <ul class="options" id="options"></ul>
+        <button id="submit" class="submit-button">Gửi</button>
+        <button id="restart" class="restart-button" style="display: none;">Chơi Lại</button>
+        <div class="result" id="result"></div>
+        <div class="score" id="score"></div>
+    </div>
+
+    <!-- Chèn tệp âm thanh -->
+    <audio id="correct-sound" src="/TRUE.mp3" ></audio>
+    <audio id="incorrect-sound" src="/FAlse.mp3" ></audio>
+
+    <script>
+        const questions = [
+            {
+                question: "Ngày Nhà Giáo Việt Nam được tổ chức vào ngày nào?",
+                options: ["20 tháng 10", "20 tháng 11", "20 tháng 12", "20 tháng 1"],
+                answer: 1
+            },
+            {
+                question: "Ý nghĩa của Ngày Nhà Giáo là gì?",
+                options: ["Tôn vinh nghề giáo", "Tổ chức lễ hội", "Kỷ niệm ngày thành lập trường", "Ngày nghỉ lễ"],
+                answer: 0
+            },
+            {
+                question: "Năm nào Việt Nam chính thức công nhận Ngày Nhà Giáo?",
+                options: ["1982", "1984", "1986", "1990"],
+                answer: 0
+            },
+            {
+                question: "Biểu tượng nào thường được sử dụng để tôn vinh các thầy cô giáo?",
+                options: ["Hoa hồng", "Hoa cúc", "Hoa sen", "Hoa lan"],
+                answer: 0
+            },
+            {
+                question: "Ngày Nhà Giáo Việt Nam còn được gọi là gì?",
+                options: ["Ngày Tôn Sư", "Ngày Kỷ Niệm Nghề Giáo", "Ngày tri ân thầy cô", "Ngày Giáo Dục"],
+                answer: 0
+            },
+            {
+                question: "Ai là người sáng lập ra Ngày Nhà Giáo Việt Nam?",
+                options: ["Chủ tịch Hồ Chí Minh", "Bác sĩ Đặng Thùy Trâm", "Nhà giáo Nguyễn Văn Cừ", "Nhà giáo Nguyễn Tất Thành"],
+                answer: 3
+            },
+            {
+                question: "Trong ngày 20 tháng 11, học sinh thường làm gì để tri ân thầy cô?",
+                options: ["Tặng quà", "Tổ chức lễ hội", "Viết thư", "Tất cả các đáp án trên"],
+                answer: 3
+            },
+            {
+                question: "Ngày Nhà Giáo Việt Nam được tổ chức lần đầu tiên vào năm nào?",
+                options: ["1982", "1984", "1986", "1988"],
+                answer: 0
+            },
+            {
+                question: "Thầy cô giáo có vai trò gì trong xã hội?",
+                options: ["Dạy dỗ thế hệ trẻ", "Làm bạn với học sinh", "Tổ chức sự kiện", "Quản lý nhà trường"],
+                answer: 0
+            },
+            {
+                question: "Một trong những câu nói nổi tiếng về thầy cô giáo là gì?",
+                options: ["Không thầy đố mày làm nên", "Thầy cô như ánh sáng", "Giáo dục là chìa khóa thành công", "Học thầy không tày học bạn"],
+                answer: 0
+            },
+            {
+                question: "Học sinh thường tổ chức hoạt động gì vào Ngày Nhà Giáo?",
+                options: ["Biểu diễn văn nghệ", "Chơi thể thao", "Đi du lịch", "Học bài"],
+                answer: 0
+            },
+            {
+                question: "Người thầy đầu tiên trong lịch sử giáo dục Việt Nam là ai?",
+                options: ["Khổng Tử", "Thầy giáo Chu Văn An", "Thầy giáo Lê Quý Đôn", "Thầy giáo Nguyễn Siêu"],
+                answer: 1
+            },
+            {
+                question: "Ngày Nhà Giáo Việt Nam nhắc nhở chúng ta điều gì?",
+                options: ["Tôn trọng thầy cô", "Chăm chỉ học tập ", "Giúp đỡ bạn bè", "Tất cả các đáp án trên"],
+                answer: 3
+            },
+            {
+                question: "Một trong những câu thơ nổi tiếng về thầy cô là gì?",
+                options: ["Cô giáo như mẹ hiền", "Thầy giáo như cha", "Thầy cô là ánh sáng", "Thầy cô là người dẫn đường"],
+                answer: 0
+            },
+            {
+                question: "Ngày Nhà Giáo Việt Nam được tổ chức ở đâu?",
+                options: ["Trường học", "Nhà văn hóa", "Công viên", "Tất cả các địa điểm trên"],
+                answer: 3
+            },
+            {
+                question: "Thầy cô giáo có vai trò quan trọng trong việc nào?",
+                options: ["Giáo dục", "Chăm sóc sức khỏe", "Quản lý tài chính", "Kinh doanh"],
+                answer: 0
+            },
+            {
+                question: "Ngày Nhà Giáo Việt Nam có nguồn gốc từ quốc gia nào?",
+                options: ["Việt Nam", "Trung Quốc", "Nhật Bản", "Hàn Quốc"],
+                answer: 0
+            }
+        ];
+
+        let currentQuestion = 0;
+        let score = 0;
+
+        // Function to load the question and options
+        function loadQuestion() {
+            const questionElement = document.getElementById("question");
+            const optionsElement = document.getElementById("options");
+            questionElement.innerText = questions[currentQuestion].question;
+            optionsElement.innerHTML = "";
+            questions[currentQuestion].options.forEach((option, index) => {
+                optionsElement.innerHTML += `<li><input type="radio" name="option" value="${index}"> ${option}</li>`;
+            });
+        }
+
+        // Function to check the answer
+        function checkAnswer() {
+            const selectedOption = document.querySelector('input[name="option"]:checked');
+            if (!selectedOption) return;
+
+            const selectedAnswer = parseInt(selectedOption.value);
+            if (selectedAnswer === questions[currentQuestion].answer) {
+                score++;
+                document.getElementById("result").innerText = "Chúc mừng, bạn đã trả lời đúng!";
+                document.getElementById("correct-sound").play();
+            } else {
+                document.getElementById("result").innerText = "Rất tiếc, bạn đã trả lời sai.";
+                document.getElementById("incorrect-sound").play();
+            }
+
+            document.getElementById("score").innerText = `Điểm hiện tại: ${score}`;
+            document.getElementById("submit").disabled = true;
+        }
+
+        // Function to move to the next question
+        function nextQuestion() {
+            if (currentQuestion < questions.length - 1) {
+                currentQuestion++;
+                loadQuestion();
+                document.getElementById("submit").disabled = false;
+                document.getElementById("result").innerText = "";
+            } else {
+                document.getElementById("quiz-container").innerHTML = `<h1>Cảm ơn bạn đã tham gia trò chơi!</h1><p>Điểm của bạn: ${score}</p><button class="restart-button" onclick="restartGame()">Chơi lại</button>`;
+            }
+        }
+
+        // Function to restart the game
+        function restartGame() {
+            score = 0;
+            currentQuestion = 0;
+            document.getElementById("quiz-container").innerHTML = `
+                <h1>Game Quiz Ngày Nhà Giáo Việt Nam</h1>
+                <div class="question" id="question"></div>
+                <ul class="options" id="options"></ul>
+                <button id="submit" class="submit-button">Gửi</button>
+                <button id="restart" class="restart-button" style="display: none;">Chơi Lại</button>
+                <div class="result" id="result"></div>
+                <div class="score" id="score"></div>
+            `;
+            loadQuestion();
+        }
+
+        // Initialize the quiz
+        loadQuestion();
+
+        document.getElementById("submit").addEventListener("click", () => {
+            checkAnswer();
+            setTimeout(nextQuestion, 2000); // Move to the next question after 2 seconds
+        });
+    </script>
+
+</body>
+</html>
